@@ -1550,8 +1550,8 @@ def action_install_python_env(args):  # type: ignore
         virtualenv_options = ['--python', sys.executable]
         if with_seeder_option:
             virtualenv_options += ['--seeder', 'pip']
-
-        subprocess.check_call([sys.executable, '-m', 'virtualenv',
+        # venv replace virtualenv
+        subprocess.check_call([sys.executable, '-m', 'venv',
                                *virtualenv_options,
                                idf_python_env_path],
                               stdout=sys.stdout, stderr=sys.stderr)
