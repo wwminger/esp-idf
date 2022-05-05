@@ -1523,36 +1523,10 @@ def action_install_python_env(args):  # type: ignore
                   'Please check the Getting Started Guides for the steps to install prerequisites for your OS.'.format(sys.executable))
             raise SystemExit(1)
 
-        virtualenv_installed_via_pip = False
-        try:
-            import virtualenv  # noqa: F401
-        except ImportError:
-            info('Installing virtualenv')
-            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--user', 'virtualenv'],
-                                  stdout=sys.stdout, stderr=sys.stderr)
-            virtualenv_installed_via_pip = True
-            # since we just installed virtualenv via pip, we know that version is recent enough
-            # so the version check below is not necessary.
-
-        with_seeder_option = True
-        if not virtualenv_installed_via_pip:
-            # virtualenv is already present in the system and may have been installed via OS package manager
-            # check the version to determine if we should add --seeder option
-            try:
-                major_ver = int(virtualenv.__version__.split('.')[0])
-                if major_ver < 20:
-                    warn('Virtualenv version {} is old, please consider upgrading it'.format(virtualenv.__version__))
-                    with_seeder_option = False
-            except (ValueError, NameError, AttributeError, IndexError):
-                pass
-
         info('Creating a new Python environment in {}'.format(idf_python_env_path))
-        virtualenv_options = ['--python', sys.executable]
-        if with_seeder_option:
-            virtualenv_options += ['--seeder', 'pip']
+
         # venv replace virtualenv
         subprocess.check_call([sys.executable, '-m', 'venv',
-                               *virtualenv_options,
                                idf_python_env_path],
                               stdout=sys.stdout, stderr=sys.stderr)
     env_copy = os.environ.copy()
